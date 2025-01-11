@@ -9,8 +9,8 @@ export default function IngredientListItem({ingredient}: {ingredient: Ingredient
             <div>
             {thisIngredient.name}
             </div>
-            <div>
-                {ingredient.amount}{getIngredientUnit(thisIngredient.unit)}
+            <div className="text-right">
+                {ingredient.amount} {getIngredientUnit(thisIngredient.unit)}
             </div>
           
         </li>
