@@ -1,21 +1,13 @@
 import { AddIngredient } from '@/features/AddIngredient'
 import { IngredientList } from '@/features/IngredientList'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Ingredient } from '@/entities/Ingredient'
+import usePantryItems from '../lib/usePantryItems'
 
-const PANTRY_ITEMS = [
-    {
-        ingredient_id: 1,
-        amount: 5
-    },
-    {
-        ingredient_id: 2,
-        amount: 500
-    }
-]
 
 function Pantry() {
-    const [pantryItems, setPantryItems] = useState(PANTRY_ITEMS)
+    const {pantryItems, setPantryItems} = usePantryItems()
+
     function addPantryItem(data: {
         ingredient: Ingredient,
         amount: number

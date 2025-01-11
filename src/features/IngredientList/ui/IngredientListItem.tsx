@@ -2,10 +2,15 @@ import type {Ingredient} from '@/entities/Ingredient'
 import useIngredients from '@/shared/ingredients/useIngredients'
 import getIngredientUnit from '@/shared/ingredients/getIngredientUnit'
 export default function IngredientListItem({ingredient}: {ingredient: Ingredient}) {
-    const ingredientLib = useIngredients()
-    const thisIngredient = ingredientLib.find(i => i.id === ingredient.ingredient_id)
+    const ingredients = useIngredients()
+    const thisIngredient = ingredients.find(i => {
+        return i.id === ingredient.ingredient_id
+    })
     return (
-        <li className="flex justify-space-between gap-8">
+        <div>
+        {
+       
+            thisIngredient &&  <li className="flex justify-space-between gap-8">
             <div>
             {thisIngredient.name}
             </div>
@@ -14,5 +19,7 @@ export default function IngredientListItem({ingredient}: {ingredient: Ingredient
             </div>
           
         </li>
+        }
+        </div>
     )
 }

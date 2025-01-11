@@ -1,32 +1,31 @@
-import { useState } from "react"
+
+import { useQuery } from "@tanstack/react-query";
+import db from '@/shared/api/client'
+import {useState, useEffect} from 'react'
 
 export default function useIngredients() {
-    const INGREDIENTS = [
-        {
-            name: 'Apple',
-            unit: 'self'
-        },
-        {
-            name: 'Rice',
-            unit: 'g'
-        },
-        {
-            name: 'Garlic',
-            unit: 'clove'
-        },
-        {
-            name: 'Bouillon',
-            unit: 'cube'
-        },
-        {
-            name: 'Olive Oil',
-            unit: 'ml'
+
+    const [ingredients, setIngredients] = useState([])
+
+
+    async function getIngredients() {
+        const {data, error} = await db.from('ingredients').select('*')
+        if (error) {
+            return []
         }
-    ].map((i, index) => ({
-        ...i,
-        id: index + 1
-    }))
-    const [ingredients, setIngredients] = useState(INGREDIENTS)
+        return data
+    }
+
+    const {data, isSuccess} = useQuery({
+        queryKey: ['ingredients'],
+        queryFn: getIngredients,
+    })
+
+
+    useEffect(() => {
+        if (!isSuccess) return;
+        setIngredients(data)
+    }, [isSuccess, data])
     
  
     return ingredients;
