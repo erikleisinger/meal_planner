@@ -1,23 +1,72 @@
 import { SelectIngredient } from "@/shared/ui/SelectIngredient"
 import { IngredientUnitInput } from "@/shared/ui/IngredientUnitInput"
 import { useState } from "react"
-export default function AddIngredient({disableItems, handleAddIngredient}: {disableItems: string[], handleAddIngredient: (ingredient: any) => void}) {
+import type { Ingredient } from "@/entities/Ingredient"
+import {Button} from '@/shared/ui/Button'
+
+
+export default function AddIngredient({ disableItems, onAdd }: {
+    disableItems: string[], onAdd: ({ ingredient, amount }: {
+        ingredient: Ingredient | 'custom',
+        amount: number,
+    }) => void
+}) {
     const [ingredientAmount, setIngredientAmount] = useState(0)
     const [selectedIngredient, setSelectedIngredient] = useState(null)
+
+    function handleSetSelectedIngredient(ingredient: Ingredient | "custom") {
+        setSelectedIngredient(ingredient)
+
+    }
+
+    function isButtonDisabled() {
+        return !ingredientAmount || !selectedIngredient
+    }
+
+    function handleAdd() {
+        const { id } = selectedIngredient || {};
+        if (!id || !selectedIngredient) {
+            onAdd({
+                ingredient: {
+                    id: null,
+                    ...(selectedIngredient || {}),
+                },
+                amount: ingredientAmount
+            })
+        } else {
+            onAdd({
+                ingredient: selectedIngredient,
+                amount: ingredientAmount
+            })
+        }
+    }
+    function setUnit(e) {
+        console.log('set unit: ', e)
+        setSelectedIngredient({
+            ...selectedIngredient,
+            unit: e
+        })
+    }
     return (
         <div className="p-2 rounded-md border-2 w-fit">
             <header className="mb-2">
                 <div className="text-sm ">Add new ingredient</div>
+
             </header>
-            <SelectIngredient selectedIngredient={selectedIngredient} setSelectedIngredient={setSelectedIngredient} disableItems={disableItems}  />
+            <div className="flex flex-col gap-2">
+                <SelectIngredient selectedIngredient={selectedIngredient} setSelectedIngredient={handleSetSelectedIngredient} disableItems={disableItems} />
+
+
+         
+
             {
-                selectedIngredient &&   <IngredientUnitInput ingredient={selectedIngredient} amount={ingredientAmount} setAmount={setIngredientAmount} />
+                selectedIngredient && <IngredientUnitInput ingredient={selectedIngredient} amount={ingredientAmount} setAmount={setIngredientAmount} unit={selectedIngredient.unit} setUnit={setUnit} />
             }
-            <button className="bg-blue-500 text-white px-4 py-1 rounded-md w-full mt-4" onClick={() => handleAddIngredient({
-                ingredient: selectedIngredient,
-                amount: ingredientAmount
-            })}>Add</button>
-          
+            <Button onClick={handleAdd} disabled={isButtonDisabled()}>
+            Add
+            </Button>
+            </div>
+
         </div>
     )
 }

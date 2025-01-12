@@ -1,8 +1,12 @@
 import useIngredients from "@/shared/ingredients/useIngredients"
-import type {Ingredient} from '@/entities/Ingredient'
+import type { Ingredient } from '@/entities/Ingredient'
+import SelectIngredientName from "./SelectIngredientName";
+import { SelectIngredientUnit } from "@/shared/ui/SelectIngredientUnit";
+import { useState, useEffect } from 'react'
+import { Input } from "@/shared/ui/Input";
 
 export default function SelectIngredient({
-    disableItems,
+    disableItems = [],
     selectedIngredient,
     setSelectedIngredient
 }: {
@@ -10,30 +14,51 @@ export default function SelectIngredient({
     selectedIngredient: Ingredient | null,
     setSelectedIngredient: (ingredient: Ingredient | null) => void
 }) {
+
     const ingredients = useIngredients()
+    const [selectedIngredientName, setSelectedIngredientName] = useState('')
+    const [customIngredientName, setCustomIngredientName] = useState('')
+    const [customIngredientUnit, setCustomIngredientUnit] = useState('')
 
-    function IngredientOption({ingredient, disabled}: {ingredient: Ingredient, disabled: boolean}) {
-        return (
-            <option disabled={disabled}  value={ingredient.name}>{ingredient.name}</option>
-        )
+    useEffect(() => {
+        if (selectedIngredientName) {
+            const ingredient = ingredients.find((ingredient: Ingredient) => ingredient.name === selectedIngredientName)
+            setSelectedIngredient(ingredient)
+        } else {
+            setSelectedIngredient(null)
+        }
+    }, [selectedIngredientName])
+
+    function updateSelectedIngredient(updates: Partial<Ingredient>) {
+        setSelectedIngredient({
+            ...selectedIngredient,
+            ...updates
+        })
     }
 
-    function IngredientOptions({ingredients}: {ingredients: Ingredient[]}) {
-        return (
-            ingredients.map((ingredient, i) => (
-                <IngredientOption ingredient={ingredient} key={i} disabled={disableItems.includes(ingredient.id)} />
-            ))
-        )
-    }
+
+
     return (
         <>
-        <select name="ingredient" id="ingredient-select" value={selectedIngredient?.name} onChange={(e) => {
-            const ingredient = ingredients.find(ingredient => ingredient.name === e.target.value)
-            setSelectedIngredient(ingredient)
-        }}>
-        <option value="">Select an ingredient</option>
-        {IngredientOptions({ingredients})}
-        </select>
+           
+                <SelectIngredientName selectedIngredientName={selectedIngredientName} setSelectedIngredientName={setSelectedIngredientName} disableItems={disableItems} />
+                
+                {
+                    selectedIngredientName === 'Custom' && 
+                    
+                    <div className="flex gap-2">
+                        <Input type="text" value={customIngredientName} setValue={(newName: string) => {
+    
+                            setCustomIngredientName(newName)
+                            updateSelectedIngredient({
+                                name: newName
+                            })
+
+                        }} placeholder="Ingredient Name" />
+        
+                    </div>
+                }
+          
         </>
     )
 }

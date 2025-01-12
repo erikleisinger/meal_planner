@@ -13,8 +13,8 @@ export default function Tabs({
         <div className="flex ">
 {
      tabs.map((tab, i) => (
-        <div onClick={() => setSelectedTab(tab.value)}>
-        <TabItem key={i} tab={tab}  selected={selectedTab === tab.value} />
+        <div onClick={() => setSelectedTab(tab.value)} key={i}>
+        <TabItem  tab={tab}  selected={selectedTab === tab.value} />
         </div>
     ))
 }
